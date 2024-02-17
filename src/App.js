@@ -20,7 +20,7 @@ export default function App() {
       <Logo />
       <Form onAddItems={handleAddItems} />
       <PackingList items={items} onDeleteItem={handleDeleteItem} onToggleItem={handleToggleItem} />
-      <Stats />
+      <Stats items={items} />
     </div>
   );
 }
@@ -66,13 +66,39 @@ function Form({onAddItems}) {
   );
 }
 function PackingList({items, onDeleteItem, onToggleItem}) {
+  const [sortBy, setSortBy] = useState("input");
+
+  let sortedItems;
+  if (sortBy === "input") sortedItems = items;
+
+  if (sortBy === "description") {
+    sortedItems = items.slice(0).sort((a, b) => a.description.localeCompare(b.description));
+  }
+
+  if (sortBy === "packed") {
+    sortedItems = items.slice(0).sort((a, b) => Number(b.packed) - Number(a.packed));
+  }
+
   return (
     <div className="list">
       <ul>
-        {items.map(item => (
+        {sortedItems.map(item => (
           <Item item={item} onToggleItem={onToggleItem} onDeleteItem={onDeleteItem} key={item.id} />
         ))}
       </ul>
+
+      <div className="actions">
+        <select
+          value={sortBy}
+          onChange={e => {
+            setSortBy(e.target.value);
+          }}
+        >
+          <option value="input">Sort by input order</option>
+          <option value="description">Sort by description</option>
+          <option value="packed">Sort by packed status</option>
+        </select>
+      </div>
     </div>
   );
 }
@@ -96,11 +122,27 @@ function Item({item, onDeleteItem, onToggleItem}) {
   );
 }
 
-function Stats() {
+function Stats({items}) {
+  if (!items.length)
+    return (
+      <p className="stats">
+        <em>Start adding some items to your list</em>
+      </p>
+    );
+  const numItems = items.length;
+  const packedItems = items.filter(item => item.packed).length;
+  const percent = Math.round((packedItems / numItems) * 100);
+
   return (
     <footer className="stats">
       {" "}
-      <em>💼You have X items on yout list, and you already packed X(X%)</em>
+      <em>
+        {percent === 100
+          ? "You got everything! Ready to go ✈️ "
+          : `  💼You have ${numItems} items on yout list, and you already packed ${packedItems} (${
+              isNaN(percent) ? "Your list is empty" : percent + "%"
+            })`}
+      </em>
     </footer>
   );
 }
