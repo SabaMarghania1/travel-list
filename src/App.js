@@ -19,7 +19,7 @@ export default function App() {
     <div className="app">
       <Logo />
       <Form onAddItems={handleAddItems} />
-      <PackingList items={items} onDeleteItem={handleDeleteItem} onToggleItems={handleToggleItem} />
+      <PackingList items={items} onDeleteItem={handleDeleteItem} onToggleItem={handleToggleItem} />
       <Stats />
     </div>
   );
@@ -38,7 +38,6 @@ function Form({onAddItems}) {
     if (!description) return;
 
     const newItem = {description, qty, packed: false, id: Date.now()};
-    console.log(newItem);
 
     onAddItems(newItem);
     setDescription("");
@@ -90,7 +89,7 @@ function Item({item, onDeleteItem, onToggleItem}) {
         }}
       />
       <span style={item.packed ? {textDecoration: "line-through"} : {}}>
-        {item.quantity} {item.description}
+        {item.qty} {item.description}
       </span>
       <button onClick={() => onDeleteItem(item.id)}>❌</button>
     </li>
