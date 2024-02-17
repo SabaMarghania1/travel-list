@@ -109,6 +109,12 @@ input {
   gap: 1.2rem;
 }
 
+.list li span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
 input[type="checkbox"] {
   height: 2rem;
   width: 2rem;
